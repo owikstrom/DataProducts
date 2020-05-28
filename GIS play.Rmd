@@ -1,0 +1,27 @@
+---
+title: "Fun with leaflet"
+author: "Olov Wikstrom"
+date: "5/28/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(leaflet)
+library(readxl)
+```
+
+## UNESCO World Heritage Sites
+The list of World Heritage sites is available from the UNESCO web site. I've plotted all locations with their descriptions on the world map.
+
+
+```{r wrangling, echo= F}
+df <- read_excel('whc-sites-2019.xls')
+my_map <- leaflet(width = 1000, height = 800) %>% 
+  addTiles() %>% 
+  addMarkers(lat = df$latitude, lng =df$longitude, popup = df$short_description_en)
+my_map
+```
+
+
