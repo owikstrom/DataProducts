@@ -17,7 +17,7 @@ shinyUI(fluidPage(
     # Application title
     navbarPage("World Heritage App",
                tabPanel("Main"),
-               tabPanel("Help")
+               tabPanel("Help",target <- a("Google Homepage", href="https://www.google.com/"))
     ),
 
     # Sidebar 
@@ -35,7 +35,9 @@ shinyUI(fluidPage(
 
         # Show a plot of the generated distribution
         mainPanel(
-            leafletOutput("map",height = 800) 
+            leafletOutput("map",height = 800),
+            
+            # tagList("URL link:", url)
         )
     )
 ))
