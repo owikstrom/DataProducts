@@ -15,29 +15,28 @@ library(shiny)
 shinyUI(fluidPage(
 
     # Application title
-
     navbarPage("World Heritage App",
                tabPanel("Main"),
                tabPanel("Help")
     ),
 
-    # Sidebar with a slider input for number of bins
+    # Sidebar 
     sidebarLayout(position= 'right',
         sidebarPanel(
             textOutput("coordinates"),
-            submitButton("submit",text = "location"),
+            actionButton("submit",label = "Submit location"),
             sliderInput("sitecount",
                         "Number of sites:",
                         min = 1,
                         max = 10,
-                        value = 5),
+                        value = 3),
             tableOutput("view")
         ),
 
         # Show a plot of the generated distribution
         mainPanel(
-            leafletOutput("map"),
-            verbatimTextOutput("summary")
+            leafletOutput("map") 
+            # verbatimTextOutput("summary")
         )
     )
 ))
