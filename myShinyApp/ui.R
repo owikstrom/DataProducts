@@ -24,12 +24,12 @@ shinyUI(fluidPage(
     sidebarLayout(position= 'right',
         sidebarPanel(
             textOutput("coordinates"),
-            actionButton("submit",label = "Submit location"),
-            sliderInput("sitecount",
-                        "Number of sites:",
+            actionButton("loc",label = "Submit location"),
+            sliderInput("maxdistance",
+                        "Max distance:",
                         min = 1,
-                        max = 10,
-                        value = 3),
+                        max = 1000,
+                        value = 100),
             tableOutput("view")
         ),
 

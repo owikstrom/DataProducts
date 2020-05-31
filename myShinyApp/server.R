@@ -17,15 +17,14 @@ library(geosphere)
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
     
-    siteList <- read_excel('data/whc-sites-2019.xls')
-    siteList <- siteList %>% select('name_en','short_description_en', 'date_inscribed','longitude','latitude')
+    siteList <- read_excel('data/whc-sites-2019.xls') %>% 
+                                   select('name_en','short_description_en', 
+                                          'date_inscribed','longitude','latitude')
     
-    # myCoord <- reactiveValues()
-    myCoord$longitude <- 21.18
-    myCoord$latitude <- 64.25
-    limit <-10
-    
-    output$map <- renderLeaflet({
+    values <- reactiveValues(dist = 0, selected=rep(1000, count(siteList)), lat=0, lng=0)
+    values$dist <- distCosine(cbind(siteList$longitude,siteList$latitude), c(0,0))/1000
+
+   output$map <- renderLeaflet({
        
     leaflet() %>% 
             addTiles() # %>%
@@ -35,25 +34,23 @@ shinyServer(function(input, output) {
     })
     
     output$coordinates <- renderText({
-        paste("Longitude:",input$map_click$lng, " Latitude:",input$map_click$lat)
+        paste("Longitude:",values$lng, " Latitude:",values$lat)
     })
 
-    output$summary <- renderPrint({
-        paste("Longitude:",input$map_click$lng, " Latitude:",input$map_click$lat)
-    })
-    
     output$view <- renderTable({
-        head(siteList[,1:2],3)
+       # siteList %>% bind_cols(incl=values$selected) %>% filter(incl == T) %>% arrange(dist) %>% select(name_en, short_description_en, dist)
     })
     
-    observeEvent(input$submit_click, { 
-        cat(file=stderr(), 'clicked')
-                siteList$dist <- distCosine(cbind(siteList$longitude,siteList$latitude), c(input$map_click$lng,input$map_click$lat))
+    observeEvent(input$loc, { 
+        values$dist <- distCosine(cbind(siteList$longitude,siteList$latitude), c(values$lng,values$lat))/1000
+        values$selected <- values$dist <=input$maxdistance
+        # cat(file=stderr(), str(dim(values$selected)))
 
     })
     
-    # observeEvent(input$map_click, { 
-    #    # cat(file=stderr(), 'clicked')
-    # })
+    observeEvent(input$map_click, { 
+        values$lng <- input$map_click$lng
+        values$lat <- input$map_click$lat
+    })
 
 })
